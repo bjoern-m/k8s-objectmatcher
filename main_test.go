@@ -105,8 +105,12 @@ func (ctx *IntegrationTestContext) CreateNamespace() error {
 }
 
 func (ctx *IntegrationTestContext) Setup() error {
+	kubeconfigOverride := *kubeconfig
+	if os.Getenv("KUBECONFIG") != "" {
+		kubeconfigOverride = os.Getenv("KUBECONFIG")
+	}
 	config, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
-		&clientcmd.ClientConfigLoadingRules{ExplicitPath: *kubeconfig},
+		&clientcmd.ClientConfigLoadingRules{ExplicitPath: kubeconfigOverride},
 		&clientcmd.ConfigOverrides{CurrentContext: *kubecontext},
 	).ClientConfig()
 	if err != nil {
